@@ -1,4 +1,4 @@
-
+![logo](_media/icon.svg)
 
 # Jay的博客
 
@@ -8,3 +8,5 @@
 
 [GitHub](https://github.com/jaycodedeer)
 [向下滑动](#docsify)
+
+![](_media/01.jpg)

@@ -1,4 +1,4 @@
-![logo](_media/icon.svg)
+![logo](picture/icon.png)
 
 # Jay的博客
 

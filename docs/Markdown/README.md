@@ -291,5 +291,5 @@ ___
 
 截图复制粘贴（可在Typora偏好设置-图像-插入图片时，选择复制图片的路径）
 
-![image-20211113005018906](/Users/zhaocong/myblog/docs/Markdown/image-20211113005018906.png)
+![image-20211113005018906](image-20211113005018906.png)
 

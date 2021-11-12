@@ -8,5 +8,3 @@
 
 [GitHub](https://github.com/jaycodedeer)
 [向下滑动](#docsify)
-
-![](_media/01.jpg)

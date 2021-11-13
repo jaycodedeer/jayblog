@@ -1,3 +1,4 @@
+![logo](picture/icon.png)
 
 # Jay的博客
 

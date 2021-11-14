@@ -1,8 +1,6 @@
 # Markdown的基础语法
 
-[TOC]
-
-本文基于[Typora]编写
+本文使用[Typora](https://typora.io/)编写,Typora编辑器让人们能更简单地用Markdown语言书写文字，并且界面简洁优美，实现了实时预览等功能。
 
 ## 文本
 

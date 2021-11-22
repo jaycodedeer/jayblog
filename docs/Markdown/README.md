@@ -109,7 +109,7 @@ H2O  H<sub>2</sub>O
 (需勾选Typora的Markdown扩展语法)
 
 ```
-语法：^2^（若不支持^2^，可以使用HTML语言<sub>2</sub>）
+语法：^2^（若不支持^2^，可以使用HTML语言<sup>2</sup>）
 ```
 
 面积   m<sup>2</sup>

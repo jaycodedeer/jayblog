@@ -1,6 +1,7 @@
 * [Java指南](Java/)
 * [Go指南](Go/)
 * [Mysql指南](Mysql/)
+* [项目练习](俄罗斯方块/)
 * [推荐系统](推荐系统/)
 * [博客的搭建](blog/)
 * [Markdown](Markdown/)

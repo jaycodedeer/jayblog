@@ -2,6 +2,224 @@
 
 
 
+#### 递归
+
+​		递归的基本思想就是“自己调用自己”，一个使用递归技术的方法将会直接或者间接的调用自己。利用递归可以用简单的程序来解决一些复杂的问题。比如：斐波那契数列的计算、汉诺塔、快排等问题。（递归算法虽然简单，但是耗时耗资源，栈内打开很多方法）
+
+**递归结构包括两个部分：** 
+
++ **递归头**：递归的结束条件，什么时候不调用自身方法，避免陷入死循环。
++ **递归体**：什么时候需要调用自身方法。
+
+```java
+//递归阶乘
+public class Recursion{
+    static long factorial(int n){
+        if(n==1){//递归头
+            return 1;
+        }
+        else{//递归体
+            return n*factorial(n-1);
+        }
+    }
+}
+
+
+//while循环计算10!阶乘
+public class TestWhile {
+    public static void main(String[] args) {
+        int a = 5;
+        int result = 1;
+        while(a>1){
+            result *= a*(a-1);
+            a=a-2;
+        }
+        System.out.println(result);
+    }
+}
+```
+
+
+
+#### this 关键字
+
+**对象创建的过程和 this 的本质**
+
+​		构造方法是创建 Java 对象的重要途径，通过 new 关键字调用构造器时，构造器也确实返回该类的对象，但这个对象并不是完全由构造器负责创建。创建一个对象分为如下四步： 
+
+1. 分配对象空间，并将对象成员变量初始化为 0 或空 
+2. 执行属性值的显式初始化 
+3. 执行构造方法 
+4. 返回对象的地址给相关的变量 
+
+​		**this 的本质就是“对象的地址” **，由于在构造方法调用前，对象已经创建。因此，在构造方法中也可以使用 this 代表“当前对象”。
+
++ 为避免产生二义性，应使用 this 来指明当前对象；普通方法中，this总是指向调用该方法的对象；构造方法中，this 总是指向正要初始化的对象。
++ 使用this关键字调用重载的构造方法，避免相同的初始化代码。但只能在构造方法中用，并且必须位于构造方法的第一句。
++ this 不能用于 static 方法中。（因为static属于类，this属于对象）
+
+```java
+//用户类
+class User{
+    int id;
+    String name;
+    String pwd;
+    static String company = "BAT";//static定义静态属性
+
+    //构造方法
+    public User(int id,String name){
+        this.id=id;
+        this.name=name;
+    }
+  
+  	//重载构造方法
+    public User(int id,String name,String pwd){
+        this(id,name);//构造方法调用另一个构造方法时，用this;在构造方法的第一句
+        this.pwd=pwd;
+    }
+}
+```
+
+
+
+#### static 关键字
+
+​		在类中，用 static 声明的成员变量为**静态成员变量**，也称为类变量。 类变量的生命周期和类相同，在整个应用程序执行期间都有效。它有如下特点： 
+
++ 为该类的公用变量，属于类，被该类的所有实例共享，在类被载入时被显式初始化。 
++ 对于该类的所有对象来说，static 成员变量只有一份，被该类的所有对象共享
++ 一般用“类名.类属性/方法”来调用。（也可以通过对象引用或类名（不需要实例化）访问静态成员。）
+
++ 在 static 方法中不可直接访问非 static 的成员。
+
+```java
+public class User { 
+  	int id; // id 
+  	String name; // 账户名 
+  	String pwd; // 密码 
+  	static String company = "北京尚学堂"; // 公司名称，static定义静态属性
+  	public User(int id, String name) { 
+      	this.id = id; 
+      	this.name = name; 
+    }
+  	public void login() { 
+      	System.out.println("登录：" + name); 
+    }
+  	public static void printCompany() { 
+      	// login();//静态成员调用了非静态成员login()，编译就会报错 		
+      	System.out.println(company); 
+    }
+  	public static void main(String[ ] args) { 
+      	User u = new User(101, "高小七"); 
+      	//”类名.类属性/方法“来调用属性和方法
+      	User.printCompany();
+      	User.company = "北京阿里爷爷"; 
+      	User.printCompany(); 
+    } 
+}
+```
+
+ ![image-20211127210212445](image-20211127210212445.png)login()方法会在对象内，但是login()会在类内（方法区)
+
+​		**普通属性、方法放在对象内（堆），静态成员变量在类内（方法区），普通成员方法、变量可以互相访问，静态成员方法、变量可以互相访问，普通成员方法可以访问静态方法变量（对象有了，肯定有对应类），但静态成员方法不能访问普通成员方法（对象不在类内、对象有很多或者只加载了类但是创建对象）（可以把类和对象的关系想象成汽车图纸和汽车的关系）**
+
+这时回看一下变量的分类和作用域，会清晰一些。
+
+![image-20211127212048773](/Users/zhaocong/myblog/docs/Java/image-20211127212048773.png)
+
+
+
+#### final 关键字
+
+final 关键字的作用：
+
++ **修饰变量:** 被他修饰的变量不可改变，一旦赋了初值，就不能被重新赋值。 
+
+​		**final int MAX_SPEED = 120;** 
+
++ **修饰方法：**该方法不可被子类重写，但是可以被重载。
+
+​		**final void study(){}** 
+
++ **修饰类:** 修饰的类不能被继承，比如：Math、String 等。 
+
+​		**final class A {}** 
+
+
+
+#### super 关键字
+
+​		super可以看做是**直接父类对象的引用**。可以**通过 super 来访问父类中被子类覆盖的方法或属性**。使用 super 调用普通方法，语句没有位置限制，可以在子类中随便调用。 
+
+```java
+public class TestSuper01 { 
+  public static void main(String[ ] args) { 
+     new ChildClass().f(); 
+  } 
+}
+
+class FatherClass { 
+  public int value; 
+  public void f(){ 
+    value = 100;
+    System.out.println ("FatherClass.value="+value);
+	} 
+}    
+
+class ChildClass extends FatherClass { 
+  public int value; 
+  public void f() { 
+    super.f(); //调用父类的普通方法 
+    value = 200; 
+    System.out.println("ChildClass.value="+value); 		
+    System.out.println(value); 
+    System.out.println(super.value); //调用父类的成员变量 
+  } 
+}
+```
+
+![image-20211127221531496](image-20211127221531496.png)
+
+​		在一个类中，若是构造方法的第一行代码没有显式的调用 super(...)或者 this(...);那么 Java 默认都会调用 super()，**含义是调用父类的无参数构造方法**，这里的 super()可以省略。
+
+```java
+public class TestSuper02 {
+		public static void main(String[ ] args) { 
+      	System.out.println("开始创建一个ChildClass对象......"); 
+      	new ChildClass(); 
+    } 
+}
+class FatherClass { 
+  	//父类构造方法
+  	public FatherClass() { 
+      	System.out.println("创建FatherClass"); 
+    } 
+  	public FatherClass(int a){
+        System.out.println("创建FatherClass,带参数");
+    }
+}
+class ChildClass extends FatherClass { 
+  	//子类构造方法
+  	public ChildClass() {
+      	//super(); //所有的构造方法第一句总是super()，若不加，编译系统帮忙加
+      	//super(3); //调用含参的构造方法
+      	System.out.println("创建ChildClass"); 
+    } 
+}
+```
+
+![image-20211127225353216](image-20211127225353216.png)
+
+上述程序执行涉及到**继承树追溯** 
+
+**构造方法调用顺序：** 
+
+​		构造方法第一句总是：super(…)来调用父类对应的构造方法。所以，流程就是：先向上追溯到 Object，然后再依次向下执行类的初始化块和构造方法，直到当前子类为止。
+
+同样**属性/方法查找顺序**也是如此，先查找当前类，若没有再追溯父类直到 Object。
+
+
+
 #### 重写override
 
 子类通过重写父类的方法，用自身行为替代父类的行为，方法的重写是实现多态的必要条件。
@@ -16,7 +234,7 @@
 
 ## 封装
 
-封装是把对象的属性和操作结合为一个独立的整体，并尽可能隐藏对象的内部实现细节。封装的要求是“高内聚，低耦合”，高内聚就是类的内部数据操作细节自己完成，不允许外部干涉；低耦合就是仅暴露少量的方法给外部使用，方便外部调用。
+​		封装是把对象的属性和操作结合为一个独立的整体，并尽可能隐藏对象的内部实现细节。封装的要求是“高内聚，低耦合”，高内聚就是类的内部数据操作细节自己完成，不允许外部干涉；低耦合就是仅暴露少量的方法给外部使用，方便外部调用。
 
 封装的优点：
 
@@ -620,7 +838,7 @@ for (int i=0;i<arr1.length;i++){  //索引范围[0,length-1]
 
 #### for-each 循环（用于读取）
 
-​		增强 for 循环 for-each 是 JDK1.5 新增加的功能，**专门用于读取数组或集合中所有的元素**，即对数组进行遍历。
+​		增强for循环for-each是 JDK1.5 新增加的功能，**专门用于读取数组或集合中所有的元素**，即对数组进行遍历。
 
 ​		for-each循环不涉及有关索引（下标）的操作，所以不能修改数组中某元素的值，仅用于读取。 
 
@@ -964,7 +1182,732 @@ class Emp{
 
 ![image-20211123221404268](image-20211123221404268.png)
 
-​		在这八个类中，除了 Character 和 Boolean 以外，其他的都是“数字型”，“数字型”都是 java.lang.Number 的子类。
+​		在这八个类中，除了 Character 和 Boolean 以外，其他的都是“数字型”，**“数字型”都是 java.lang.Number 的子类**。
+
+![image-20211124213333096](image-20211124213333096.png)
+
+​		Number 类是抽象类(Number的源码：`public abstract class Number implements java.io.Serializable`)，因此它的抽象方法，所有子类都需要提供实现。Number 类提供了抽象方法：intValue()、longValue()、floatValue()、doubleValue()，意味着所有的“数字型”包装类都可以互相转型。 
+
+
+
+#### 1.1包装类的使用与作用
+
+**对于包装类来说，这些类的用途主要包含两种：** 
+
+1. 基本数据类型转换为对象（或包装类对象转换为基本数据类型），方便涉及到对象的操作，如 Object[ ]、集合等的操作。 
+2. 包含每种基本数据类型的相关属性如最大值、最小值等，以及相关的操作方法（这些操作方法的作用是在**<u>基本数据类型、包装类对象、字符串之间提供相互之间的转化</u>**）。
+
+**八种基本数据类型用法一样，所以以Integer类为例**
+
+```java
+//基本数据类型转换为对象
+Integer i1 = new Integer(20); //从java9开始被废弃，不推荐使用
+Integer i2 = Integer.valueOf(20); // 推荐
+
+//包装类对象转换为基本数据类型
+double d = i2.doubleValue();
+
+//数字字符串转换为包装类对象
+Integer i3 = Integer.valueOf("123");
+Integer i4 = Integer.parseInt("123");
+
+//包装类对象转换成字符串
+String s = i3.toString();
+
+//一些常用的常量
+System.out.println("int能表示最大的整数"+Integer.MAX_VALUE);
+System.out.println("int能表示最小的整数"+Integer.MIN_VALUE);
+```
+
+**自动装箱和拆箱**
+
+​		自动装箱和拆箱就是将基本数据类型和包装类之间进行自动的互相转换。JDK1.5 后， Java 引入了自动装箱(autoboxing)/拆箱(unboxing)。
+
+​		自动装箱过程是通过调用包装类的 valueOf()方法实现的，而自动拆箱过程是通过调用包装类的 xxxValue()方法实现的（xxx 代表对应的基本数据类型，如 intValue()、 doubleValue()等）。
+
+```java
+//自动装箱
+Integer a = 300;//编译器自动帮你改为:Integer i = Integer.valueOf(300);
+
+//自动拆箱
+int b = a;//编译器自动帮你改为:int b = a.intValue(); //a为一个对象
+
+//包装类空指针异常问题
+Integer i = null;
+int j = i; //编译器帮你改为：int j = i.intValue(); //c为空，无法调用方法
+           //java.lang.NullPointerException 对象为null，无法调用方法
+```
+
+![image-20211125153631728](image-20211125153631728.png)
+
+
+
+#### 1.2包装类的缓存问题
+
+​		整型、char类型所对应的包装类，在自动装箱时，对于-128~127之间的值会进行缓存处理，其目的是提高效率。 
+
+​		缓存处理的原理为：如果数据在-128~127这个区间，那么在类加载时就已经为该区间的每个数值创建了对象，并将这256个对象存放到一个名为cache的数组中。每当自动装箱过程发生时（或者手动调用valueOf()时），就会先判断数据是否在该区间，**如果在则直接获取数组中对应的包装类对象的引用，如果不在该区间，则会通过new调用包装类的构造方法来创建对象**。
+
+```java
+//包装类的缓存问题
+Integer d1 = 1234;
+Integer d2 = 1234;
+Integer d3 = 123;
+Integer d4 = 123; //自动装箱，调用Integer.valueOf(123)
+
+System.out.println(d1==d2);//false 3000不在缓存中，所以要创建了两个不同对象
+System.out.println(d3==d4);//true  Integer类的缓存问题
+System.out.println(d1.equals(d2));//true  比的是值
+```
+
+```java
+//valueOf（）源码
+public static Integer valueOf(int i) {
+		if (i >= IntegerCache.low && i <= IntegerCache.high)
+				return IntegerCache.cache[i + (-IntegerCache.low)];//若在-128~127区间，直接返回缓存数组中的某个元素
+		return new Integer(i);
+}
+//IntegerCache类为Integer类的一个静态内部类，仅供Integer类使用；IntegerCache.low为-128，IntegerCache.high为127
+
+//equals()源码
+public boolean equals(Object obj) {
+		if (obj instanceof Integer) {
+				return value == ((Integer)obj).intValue();
+    }
+    return false;
+}
+```
+
+![image-20211125161406685](image-20211125161406685.png)
+
+#### 1.3自定义一个简单的包装类(MyInteger包装类)
+
+```java
+public class MyInteger {
+    private int value;
+    private static MyInteger[] cache = new MyInteger[256];
+
+    public static final int LOW = -128;
+    public static final int HIGH = 127;
+
+    static {
+        //缓存[-128,127]
+        for(int i=LOW;i<=HIGH;i++){
+            //-128,0;-127,1
+            cache[i+128] = MyInteger.valueOf(i);
+
+        }
+    }
+
+    public static MyInteger valueOf(int i){
+        if(i>=LOW&&i<=HIGH){
+            return cache[i+128];
+        }
+        return new MyInteger(i);
+    }
+
+    public int intValue(){
+        return value;
+    }
+
+    @Override
+    //要想打印时返回数字，重写toString()，否则返回地址
+    public String toString() {
+        return this.value+"";//+""可使数字转字符串
+    }
+
+    private MyInteger(int i){
+        this.value=i;
+    }
+
+    public static void main(String[] args) {
+        MyInteger m = MyInteger.valueOf(300);
+        System.out.println(m);
+
+        MyInteger m1 = MyInteger.valueOf(123);
+        MyInteger m2 = MyInteger.valueOf(123);
+        MyInteger m3 = MyInteger.valueOf(1233);
+        MyInteger m4 = MyInteger.valueOf(1233);
+        int m5 = m3.intValue();
+
+        System.out.println(m1==m2);
+        System.out.println(m3==m4);
+        System.out.println(m5);
+    }
+}
+```
+
+![image-20211125172126152](image-20211125172126152.png)
+
+
+
+### 2.字符串相关类
+
+​		String 类、StringBuilder 类、StringBuffer 类是三个字符串相关类。String 类是的对象代表不可变的字符序列，StringBuilder 类和 StringBuffer 类代表可变字符序列。
+
+#### 2.1 String 类
+
+**String 类源码分析**
+
+![image-20211128183823179](image-20211128183823179.png)
+
+​		字符串内容全部存储到 value[ ]数组中，而变量 value 是 final 类型的，也就是常量(即只能被赋值一次)，这就是“不可变对象”的典型定义方式。String 的一些方法，比如：substring()是对字符串的截取操作，就是产生新的字符串，不改变原字符串。
+
+**字符串常量拼接时的优化**
+
+​		在遇到字符串常量之间的拼接时，编译器会做出优化，即在编译期间就会完成字符串的拼接。
+
+```java
+public class TestString2 { 
+		public static void main(String[ ] args) {
+      	//编译器做了优化,直接在编译的时候将字符串进行拼接
+      	String str1 = "hello" + " java";//相当于 str1 = "hello java"	     
+      	String str2 = "hellojava"; 
+      	System.out.println(str1 == str2);//true 
+      	String str3 = "hello"; 
+      	String str4 = " java"; //编译的时候不知道变量中存储的是什么,所以没办法在编译的时候优化
+      	String str5 = str3 + str4; 
+      	System.out.println(str2 == str5);//false	
+		} 
+}      
+```
+
+#### 2.2 StringBuffer 和 StringBuilder类
+
+​		StringBuffer 和 StringBuilder 非常类似，均代表可变的字符序列。 这两个类都是抽象类AbstractStringBuilder的子类，方法几乎一模一样。
+
+AbstractStringBuilder的源码
+
+![image-20211128185815814](image-20211128185815814.png)
+
+​		内部也是一个字符数组，但这个字符数组没有用final修饰，随时可以修改。因此，StringBuilder和StringBuffer为“可变字符序列”。
+
+两者区别：
+
++ StringBuffer JDK1.0 版本提供的类，**线程安全，做线程同步检查， 效率较低**。 
+
++ StringBuilder JDK1.5 版本提供的类，**线程不安全，不做线程同步检查，因此效率较高，建议采用该类。**
+
+**常用方法列表：** 
+
+1. 重载的 public StringBuilder append(…)方法 
+
+​		可以为该 StringBuilder 对象添加字符序列，**仍然返回自身对象**。 
+
+2. 方法 public StringBuilder delete(int start,int end) 
+
+​		可以删除从 start 开始到 end-1 为止的一段字符序列，**仍然返回自身对象**。 
+
+3. 方法 public StringBuilder deleteCharAt(int index) 
+
+​		移除此序列指定位置上的 char，仍然返回自身对象。 
+
+4. 重载的 public StringBuilder insert(…)方法 
+
+   可以为该 StringBuilder 对象在指定位置插入字符序列，**仍然返回自身对象**。 
+
+5. 方法 public StringBuilder reverse() 
+
+   用于将字符序列逆序，仍然返回自身对象。 
+
+6. 方法 public String toString() 返回此序列中数据的字符串表示形式。 
+
+```java
+public class TestStringBufferAndBuilder{
+    public static void main(String[ ] args) {
+        /**StringBuilder*/
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 7; i++) {
+            sb.append((char) ('a' + i));//追加单个字符
+        }
+        System.out.println(sb);//转换成 String 输出
+        sb.append(", I can sing my abc!");//追加字符串
+        System.out.println(sb.toString());
+        //StringBuffer，下面的方法同样适用 StringBuilder
+        StringBuffer sb2 = new StringBuffer("计算机编程");
+        sb2.insert(0, "爱").insert(0, "我");//插入字符串
+        System.out.println(sb2);
+        sb2.delete(0, 2);//删除子字符串
+        System.out.println(sb2);
+        sb2.deleteCharAt(0).deleteCharAt(0);//删除某个字符
+        System.out.println(sb2.charAt(0));//获取某个字符
+        System.out.println(sb2.reverse());//字符串逆序
+    }
+}
+```
+
+![image-20211128194512930](image-20211128194512930.png)
+
+
+
+#### 2.3 不可变和可变字符序列使用陷阱
+
+**String 使用的陷阱** 
+
+​		String 一经初始化后，就不会再改变其内容了。对 String 字符串的操作作实际上是对其副本（原始拷贝）的操作，原字符串不改变，会产生新的字符串。如果多次执行这些改变串内容的操作，会导致大量副本字符串对象存留在内存中，降低效率。如果这样的操作放到循环中，会极大影响程序的时间和空间性能，甚至会造成服务器的崩溃。 
+
+​		相反，StringBuilder 和 StringBuffer 类是对原字符串本身操作的，可以对字符串进行修改而不产生副本拷贝或者产生少量的副本。因此可以在循环中使用。
+
+```java
+public class TestString2 {
+    public static void main(String[ ] args) {
+        /*使用String进行字符串的拼接*/
+        String str8 = "";
+        //本质上使用StringBuilder拼接, 但是每次循环都会生成一个StringBuilder对象
+        long num1 = Runtime.getRuntime().freeMemory();//获取系统剩余内存空间
+        long time1 = System.currentTimeMillis();//获取系统的当前时间
+        for (int i = 0; i < 3000; i++) {
+            str8 = str8 + i;//相当于产生了500个对象
+        }
+        long num2 = Runtime.getRuntime().freeMemory();
+        long time2 = System.currentTimeMillis();
+        System.out.println("String占用内存 : " + (num1 - num2));
+        System.out.println("String占用时间 : " + (time2 - time1));
+        /*使用StringBuilder进行字符串的拼接*/
+        StringBuilder sb1 = new StringBuilder("");
+        long num3 = Runtime.getRuntime().freeMemory();
+        long time3 = System.currentTimeMillis();
+        for (int i = 0; i < 3000; i++) {
+            sb1.append(i);
+        }
+        long num4 = Runtime.getRuntime().freeMemory();
+        long time4 = System.currentTimeMillis();
+        System.out.println("StringBuilder占用内存 : " + (num3 - num4));
+        System.out.println("StringBuilder占用时间 : " + (time4 - time3));
+    }
+}
+```
+
+![image-20211128200925778](image-20211128200925778.png)
+
+ 
+
+### 3.时间处理相关类
+
+​		在计算机世界，我们把 1970 年 1 月 1 日 00:00:00 定为基准时间，每个度量单位是毫秒(1 秒的千分之一)。
+
+用 long 类型的变量来表示时间，得现在时刻的“时刻数值”：
+
+`long now = System.currentTimeMillis();`
+
+```java
+long a =Long.MAX_VALUE/(1000L*3600*24*365);
+System.out.println(a);//大约表示到2.9亿年后
+
+long nowMum = System.currentTimeMillis();//代表当前时刻的毫秒数
+System.out.println(nowMum);
+```
+
+
+
+![image-20211128220531231](image-20211128220531231.png)
+
+#### 3.1 Date 时间类(java.util.Date)
+
+在标准 Java 类库中包含一个 Date 类。它的对象表示一个特定的瞬间，精确到毫秒。  
+
++ Date() 分配一个 Date 对象，并初始化此对象为系统当前的日期和时间，可以精确到毫秒）。 
++ Date(long date) 分配 Date 对象并初始化此对象，以表示自从标准基准时间（称为“历元（epoch）”，即 1970 年 1 月 1 日 00:00:00 GMT）以来的指定毫秒数。 
++ long getTime() 返回自 1970 年 1 月 1 日 00:00:00 GMT 以来此 Date 对象表示的毫秒数。
++ boolean after(Date when) 测试此日期是否在指定日期之后。
++  booleanbefore(Date when) 测试此日期是否在指定日期之前。 
++ boolean equals(Object obj) 比较两个日期的相等性。
+
+```java
+import java.util.Date;
+
+public class TestDate {
+    public static void main(String[] args) {
+      	long a =Long.MAX_VALUE/(1000L*3600*24*365);
+				System.out.println(a);//大约表示到2.9亿年后
+
+				long nowMum = System.currentTimeMillis();//代表当前时刻的毫秒数
+				System.out.println(nowMum);
+      
+        Date d1 = new Date(); //没有传参，代表当前时刻
+        System.out.println(d1);
+        System.out.println(d1.getTime());//d1的秒数（以1970年为基准）
+
+        Date d2 = new Date(1000L*3600*24*365*250); //有参数
+        System.out.println(d2);
+    }
+}
+```
+
+![image-20211128221256618](image-20211128221256618.png)
+
+​		现在Date 类中的很多方法都已经过时了。JDK1.1 之前的Date 包含了：日期操作、字符串转化成时间对象等操作。JDK1.1 之后，日期操作一般使用Calendar 类，而字符串的转化使用DateFormat类。 
+
+#### 3.2 DateFormat 类和 SimpleDateFormat 类
+
+**DateFormat 类的作用**
+
+​		**把时间对象转化成指定格式的字符串，或把指定格式的字符串转化成时间对象**。DateFormat 是一个抽象类，一般使用它的的子类 SimpleDateFormat 类来实现。
+
+```java
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class TestDateFormat {
+    public static void main(String[] args) throws ParseException {
+        //new出SimpleDateFormat对象,用于调用parse()和format()方法，以及规定日期格式
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");//指定字符串的格式,格式可以换但格式要统一
+        SimpleDateFormat df3 = new SimpleDateFormat("yyyy年MM月dd日 hh时mm分ss秒");
+
+        //字符串转化为Date对象
+        Date d1 = df.parse("2021-01-01 01:02:03");
+        System.out.println(d1.getTime());
+
+        Date d3 = df3.parse("2022年01月01日 0时1分2秒");
+        System.out.println(d3.getTime());
+
+        //Date对象转化为字符串
+        Date d2 = new Date();//无参表现在时刻
+        String s2 = df.format(d2);
+        System.out.println(s2);
+
+        //输出第几周、第几天
+        SimpleDateFormat df4 = new SimpleDateFormat("今年的第w周,今年第D天");
+        System.out.println(df4.format(new Date()));
+    }
+}
+```
+
+代码中的格式化字符的具体含义
+
+![image-20211201204539394](image-20211201204539394.png)
+
+#### 3.3 Calendar 日历类
+
+​		Calendar 类是一个抽象类，为我们提供了关于**日期计算**的相关功能，比如：年、月、日、时、分、秒的展示和计算。GregorianCalendar 是 Calendar 的一个具体子类，提供了世界上大多数国家/地区使用的标准日历系统。 
+
+​		注意：月份的表示，一月是 0，二月是 1，以此类推，12 月是 11。 因为大多数人习惯于使用单词而不是使用数字来表示月份，这样程序也许更易读，父类 Calendar 使用常量来表示月份：JANUARY、FEBRUARY 等等。 
+
+```java
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+public class TestCalendar {
+    public static void main(String[] args) {
+        GregorianCalendar calendar = new GregorianCalendar(2021, 11, 1, 22, 10, 50);
+        //取值用get()方法
+        int year = calendar.get(Calendar.YEAR); // 打印：2021
+        int month = calendar.get(Calendar.MONTH);//打印：12
+        int day = calendar.get(Calendar.DAY_OF_MONTH);// 日：Calendar.DATE 和 Calendar.DAY_OF_MONTH 同义
+        int date = calendar.get(Calendar.DAY_OF_WEEK); // 一周的第几天
+        // 星期几 这里是：1-7.周日是 1，周一是 2 ...周六是 7
+        System.out.println(year);
+        System.out.println(month);
+        System.out.println(day);
+        System.out.println(date);
+
+        //设置日期用set()方法
+        GregorianCalendar calendar2 = new GregorianCalendar();
+        calendar2.set(Calendar.YEAR, 2022);
+        calendar2.set(Calendar.MONTH, Calendar.FEBRUARY);
+        calendar2.set(Calendar.DAY_OF_MONTH,2);
+        calendar2.set(Calendar.HOUR_OF_DAY, 10);
+        calendar2.set(Calendar.MINUTE, 20);
+        calendar2.set(Calendar.SECOND, 23);
+        printCalendar(calendar2);
+
+        //日期计算用add()方法
+        GregorianCalendar calendar3 = new GregorianCalendar(2021, 12, 1, 22, 10, 50);
+        calendar3.add(Calendar.MONTH, -7); // 月份减 7
+        calendar3.add(Calendar.DATE, 7); // 增加 7 天
+        printCalendar(calendar3);
+
+        // 日历对象和时间对象转化
+        Date d = calendar3.getTime();
+        GregorianCalendar calendar4 = new GregorianCalendar();
+        calendar4.setTime(new Date());
+        System.out.println(d);
+
+    }
+  	//定义printCalendar函数
+    private static void printCalendar(Calendar calendar) {
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int date = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        String week = "" + ((date == 0) ? "日" : date);
+        int hour = calendar.get(Calendar.HOUR);
+        int minute = calendar.get(Calendar.MINUTE);
+        int second = calendar.get(Calendar.SECOND);
+        System.out.printf("%d 年%d 月%d 日,星期%s %d:%d:%d\n", year, month, day, week, hour, minute, second);
+    }
+}
+```
+
+![image-20211201213148888](image-20211201213148888.png)
+
+
+
+
+
+### 4.其他常用类：Math类、Random类、File类、枚举
+
+#### 4.1 Math 类
+
+​		java.lang.Math 提供了一系列静态方法用于科学计算；其方法的参数和返回值类型一般为 double 型。如果需要更加强大的数学运算能力，计算高等数学中的相关内容，可以使用 apache commons 下面的 Math 类库。
+
+Math 类的常用方法：
+
++ abs 绝对值 
++ acos,asin,atan,cos,sin,tan 三角函数 
++ sqrt 平方根 
++ pow(double a, double b) a 的 b 次幂 
++ max(double a, double b) 取大值 
++ min(double a, double b) 取小值 
++ ceil(double a) 大于 a 的最小整数 
++ floor(double a) 小于 a 的最大整数 
++ random() 返回 0.0 到 1.0 的随机数 
++ long round(double a) double 型的数据 a 转换为 long 型（四舍五入） 
++ toDegrees(double angrad) 弧度->角度 
++ toRadians(double angdeg) 角度->弧度
+
+
+
+#### 4.2 Random 类
+
+​		Math 类中虽然为我们提供了产生随机数的方法 Math.random()，但是通常我们需要的随机数范围并不是[0, 1)之间的 double 类型的数据，这就需要对其进行一些复杂的运算。如果使用 Math.random()计算过于复杂的话，我们可以使用例外一种方式得到随机数，即Random 类，这个类是专门用来生成随机数的，并且 Math.random()底层调用的就是Random 的 nextDouble()方法。 
+
+```java
+import java.util.Random;
+
+public class TestRandom {
+    public static void main(String[] args) {
+        Random rand = new Random();
+        //随机生成[0,1)之间的 double 类型的数据
+        System.out.println(rand.nextDouble());
+        //随机生成 int 类型允许范围之内的整型数据
+        System.out.println(rand.nextInt());
+        //随机生成[0,1)之间的 float 类型的数据
+        System.out.println(rand.nextFloat());
+        //随机生成 false 或者 true
+        System.out.println(rand.nextBoolean());
+        //随机生成[0,10)之间的 int 类型的数据
+        System.out.println(rand.nextInt(10));
+        //随机生成[20,30)之间的 int 类型的数据
+        System.out.println(20+rand.nextInt(10));
+        //随机生成[20,30)之间的 int 类型的数据（此种方法计算较为复杂）
+        System.out.println(20+(int)(rand.nextDouble()*10));
+    }
+}
+```
+
+![image-20211201230610224](image-20211201230610224.png)
+
+
+
+#### 4.3 File类
+
+**File 类的基本用法**
+
+​		java.io.File 类：代表文件和目录。 在开发中，读取文件、生成文件、删除文件、修改文件的属性时经常会用到本类。
+
+**1. File类创建对象**
+
+​		File 类的常见构造方法：public File(String pathname)，以 pathname 为路径创建 File 对象，如果 pathname 是相对路径，则默认在系统属性user.dir中存储
+
+```java
+import java.io.File;
+import java.io.IOException;
+
+public class TestFile {
+    public static void main(String[] args) throws IOException {
+      	//创建File对象
+        File f1 = new File("d:/movies/肖申克的救赎.mp4");//文件路径，f1代表肖申克的救赎.mp4这个文件
+        //File f1 = new File("d:\\movies\\肖申克的救赎.mp4");//同上
+        File f2 = new File("d:/movies");//目录路径，f2代表movies这个目录
+
+        System.out.println(System.getProperty("user.dir"));//项目的路径
+        File f3 = new File(System.getProperty("user.dir"));
+
+      	//使用File类创建文件
+        File f4 = new File("a.txt"); //相对路径：默认放到user.dir目录下面
+        f4.createNewFile();//在user.dir目录下面创建文件
+        File f5 = new File("d:/b.txt");//绝对路径
+        f5.createNewFile();//在d盘创建b.txt文件
+    }
+}
+```
+
+
+
+**2. 使用File对象访问文件或目录属性**
+
+![image-20211203104508010](image-20211203104508010.png)
+
+```java
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+
+public class TestFile {
+    public static void main(String[] args) throws IOException {
+        File f = new File("/Users/zhaocong/mymovies/a.txt");
+        f.createNewFile();
+      
+        System.out.println("File 是否存在："+f.exists());
+        System.out.println("File 是否是目录："+f.isDirectory());
+        System.out.println("File 是否是文件："+f.isFile());
+        System.out.println("File 最后修改时间："+new Date(f.lastModified()));
+        System.out.println("File 的大小："+f.length());
+        System.out.println("File 的文件名："+f.getName());
+        System.out.println("File 的目录路径："+f.getPath());
+    }
+}
+```
+
+![image-20211203112229209](image-20211203112229209.png)
+
+
+
+**3. 使用File对象创建、删除文件或目录**
+
+![image-20211203113138301](image-20211203113138301.png)
+
+**删除目录时，只是删除File对象所表示的那一级目录，不会删除所有目录**
+
+```java
+import java.io.File;
+import java.io.IOException;
+
+public class TestFile {
+    public static void main(String[] args) throws IOException {
+      	File f = new File("d:/c.txt"); 
+      	f.createNewFile(); // 会在 d 盘下面生成 c.txt 文件
+      	f.delete(); // 将该文件或目录从硬盘上删除
+      
+       	File f1 = new File("/Users/zhaocong/mymovies/华语/大陆");
+        boolean flag1 = f1.mkdir();//目录结构中有一个不存在，则不会创建整个目录树
+        System.out.println(flag1);//创建失败
+        boolean flag2 = f1.mkdirs();//目录结构中缺失，也会创建整个目录树
+        System.out.println(flag2);//创建成功
+      	
+      	f1.delete();//删除的只是”大陆“这一级目录，而不是所有目录，因为f1仅代表大陆这一级目录
+    }
+}
+```
+
+![image-20211203114810785](image-20211203114810785.png)
+
+
+
+**4. 递归**
+
+```java
+import java.io.File;
+
+public class TestFile2 {
+    public static void main(String[] args) {
+        File f = new File("/Users/zhaocong/电影");
+        printFile(f,0);
+    }
+    //printFile方法
+    static void printFile(File file,int level){
+        //利用"-"表示层次数
+        for(int i=0;i<=level;i++){
+            System.out.print("-");
+        }
+        //输出文件名
+        System.out.println(file.getName());
+        //判断file是否是目录，列出所含的所有文件，形成列表，遍历列表下一级文件继续调用printFile()方法
+        if(file.isDirectory()){
+            File[] files = file.listFiles();//列出目录上的所有文件或目录
+            for(File temp:files){
+                //递归调用
+                printFile(temp,level+1);
+            }
+        }
+    }
+}
+```
+
+![image-20211203183004199](image-20211203183004199.png)
+
+.DS_Store是存储文件信息的隐藏文件（可忽略）
+
+
+
+#### 4.4 枚举
+
+枚举类型的定义包括枚举声明和枚举体。格式如下：
+
+```java
+enum 枚举名 { 
+		枚举体（常量列表） 
+}
+```
+
+```java
+//创建枚举类型
+enum Season { 
+  	SPRING, SUMMER, AUTUMN, WINDER 
+}
+```
+
+​		所有的枚举类型隐性地继承自 java.lang.Enum。枚举实质上还是类，而每个被枚举的成员实质就是一个枚举类型的实例，他们默认都是 public static final 修饰的。可以直接通过枚举类型名使用它们。（当你需要定义一组常量时，可以使用枚举类型）
+
+**枚举的使用**
+
+​		以Week枚举为例，**values()**返回的是Week[ ]（数组）内所有的枚举元素，Week.values()[ ]可以表示数组内的任一成员，如：Week.values()[0]表示星期一，Week.values()[5]表示星期六。
+
+```java
+import java.util.Random;
+
+public class TestEnum {
+    public static void main(String[] args) {
+        System.out.println(Season.SUMMER);
+        // 枚举遍历
+        for (Week k : Week.values()) {   //values()返回的：Week[]（数组）里面包含了所有枚举元素
+            System.out.println(k);
+        }
+
+        Week[] ws = Week.values();//数组
+        System.out.println(ws[1]);
+        System.out.println(Week.values()[4]);
+
+        // switch 语句中使用枚举
+        int a = new Random().nextInt(4); // 生成 0，1，2，3 的随机数
+        switch (Season.values()[a]) {
+            case SPRING:
+                System.out.println("春天");
+                break;
+            case SUMMER:
+                System.out.println("夏天");
+                break;
+            case AUTUMN:
+                System.out.println("秋天");
+                break;
+            case WINTER:
+                System.out.println("冬天");
+                break;
+        }
+    }
+}
+
+enum Season{
+    SPRING,SUMMER,AUTUMN,WINTER
+}
+
+enum Week{
+    星期一,星期二,星期三,星期四,星期五,星期六,星期日
+}
+```
+
+
+
+
+
+## 异常
+
+
+
+
 
 
 

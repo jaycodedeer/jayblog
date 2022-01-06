@@ -354,8 +354,8 @@ public class TestAbstractClass {
 **抽象类的使用要点:** 
 
 1. 有抽象方法的类只能定义成抽象类
-2. 抽象类不能实例化，即不能用 new 来实例化抽象类；抽象类可以包含属性、方法、构造方法，但是构造方法不能用来 new 实例，只能用来被子类调用
-3. 抽象类只能用来被继承
+2. **抽象类不能实例化**，即不能用 new 来实例化抽象类；抽象类可以包含属性、方法、构造方法，但是构造方法不能用来 new 实例，只能用来被子类调用
+3. **抽象类只能用来被继承**
 4. 抽象方法必须被子类实现
 
 
@@ -381,7 +381,7 @@ public class TestAbstractClass {
 
 + **接口名：**和类名采用相同命名机制。 
 
-+ **extends：**接口可以多继承。 
++ **extends：接口可以多继承**。 
 
 + **常量：**接口中的属性只能是常量，只能public static final修饰，默认为省略不写。 
 
@@ -395,7 +395,7 @@ public class TestAbstractClass {
 
 + 一个类实现了接口，必须实现接口中所有的方法，并且这些方法只能是 public 的。 
 
-+ JDK1.8（不含 8）之前，接口中只能包含静态常量、抽象方法，不能有普通属性、构造 方法、普通方法。 
++ JDK1.8（不含 8）之前，接口中只能包含静态常量、抽象方法，不能有普通属性、构造方法、普通方法。 
 
 + **JDK1.8（含 8）后，接口中包含普通的静态方法、默认方法。**
 
@@ -1904,6 +1904,518 @@ enum Week{
 
 
 ## 异常
+
+### 1. 异常的概念
+
+异常指程序运行过程中出现的非正常现象，例如用户输入错误、除数为零、需要处理的文件不存在、数组下标越界等。在 Java 的异常处理机制中，引进了很多用来描述和处理异常的类，称为异常类。异常类定义中包含了该类异常的信息和对异常进行处理的方法。异常处理，就是指程序在出现问题时依然可以正确的执行完。
+
+```java
+    public static void main(String[] args) {
+        System.out.println("step1");
+        try{
+            int i = 1/0;//抛出异常
+        }catch (Exception e){
+            e.printStackTrace();//捕获异常
+        }
+        System.out.println("step2");
+    }
+```
+
+![image-20211221203635935](image-20211221203635935.png)
+
+从逻辑上处理异常，try-catch可以使程序正常运行（若没有try-catch则不会执行到step2）
+
+**Java 是采用面向对象的方式来处理异常的。处理过程：** 
+
++ **抛出异常：**在执行一个方法时，如果发生异常，则这个方法生成**代表该异常的一个对象**，停止当前执行路径，并把异常对象提交给 JRE。 
++ **捕获异常：**JRE 得到该异常后，寻找相应的代码来处理该异常。JRE 在方法的调用栈中查找，从生成异常的方法开始回溯，直到找到相应的异常处理代码为止。 
+
+
+
+### 2. 异常的分类
+
+JDK 中定义了很多异常类，这些类对应了各种各样可能出现的异常事件，所有异常对象都是派生于 Throwable 类的一个实例。如果内置的异常类不能够满足需要，还可以创建自己的异常类。
+
+Java 对异常进行了分类，不同类型的异常分别用不同的 Java 类表示，所有异常的**根类**为 **java.lang.Throwable**，Throwable 下面又派生了两个子类：Error 和 Exception。
+
+Exception分为CheckedException（编译就报错）和UncheckedException（编译器不报错运行时报错）
+
+![image-20211221204309264](image-20211221204309264.png)
+
+#### 2.1 Error
+
+Error 是程序无法处理的错误，表示运行应用程序中较严重问题。大多数错误与代码编写者执行的操作无关，而表示代码运行时 JVM（Java 虚拟机）出现的问题。例如，Java虚拟机运行错误（Virtual MachineError），当 JVM 不再有继续执行操作所需的内存资源时，将出现 OutOfMemoryError。这些异常发生时，Java 虚拟机（JVM）一般会选择线程终止。Error 表明系统 JVM 已经处于不可恢复的崩溃状态中，不需要处理。
+
+
+
+#### 2.2 Exception
+
+Exception 是程序本身能够处理的异常，如：空指针异常（NullPointerException）、数组下标越界异常（ ArrayIndexOutOfBoundsException ） 、 类 型 转 换 异 常（ClassCastException）、算术异常（**ArithmeticException**）等。 
+
+Exception 类是所有异常类的父类，其子类对应了各种各样可能出现的异常事件。 通常 Java 的异常可分为： 
+
++ RuntimeException 运行时异常（编译器不报错运行时报错）
++ CheckedException 已检查异常（编译就报错）
+
+##### 2.2.1 RuntimeException 运行时异常
+
+派生于 RuntimeException 的异常，如被 0 除、数组下标越界、空指针等，其产生比较频繁，处理麻烦，如果显式的声明或捕获将会对程序可读性和运行效率影响很大。 因此由系统自动检测并将它们交给缺省的异常处理程序（用户可不必对其处理）。这类异常通常是由编程错误导致的，所以在编写程序时，并不要求必须使用异常处理机制来处理这类异常,经常需要通过增加“**逻辑处理**来避免这些异常”。
+
+1. 空指针异常（NullPointerException）：
+
+当程序访问一个空对象的成员变量或方法，或者访问一个空数组的成员时会发生空指针异常（NullPointerException）
+
+```java
+    public static void main(String[] args) {
+        String str = null;
+        System.out.println(str.charAt(0));
+    }
+```
+
+![image-20211221210758259](image-20211221210758259.png)
+
+增加非空判断来解决非空判断
+
+```java
+public static void main(String[ ] args) { 
+  String str=null; 
+  if(str!=null){ 
+    System.out.println(str.charAt(0)); 
+  } 
+}
+```
+
+
+
+2. 类 型 转 换 异 常（ClassCastException）
+
+```java
+public class Test01 {
+    public static void main(String[] args) {
+        Animal a =new Dog();
+        Cat c = (Cat) a;
+    }
+}
+
+class Animal{
+  
+}
+class Dog extends Animal{
+  
+}
+class Cat extends Animal{
+  
+}
+```
+
+![image-20211221211836846](image-20211221211836846.png)
+
+解决 ClassCastException 的典型方式：
+
+```java
+public class Test01 {
+    public static void main(String[] args) {
+        Animal a =new Dog(4,"a");
+        if (a instanceof Cat){
+            Cat c = (Cat) a;
+        }
+    }
+}
+```
+
+
+
+3. 数组下标越界异常（ ArrayIndexOutOfBoundsException ）
+
+当程序访问一个数组的某个元素时，如果这个元素的索引超出了 0~数组长度-1 这个范围，则会出现数组下标越界异常
+
+```java
+public class Test02 {
+    public static void main(String[] args) {
+        int[] a = new int[5];
+        System.out.println(a[5]);
+    }
+}
+
+//解决方案
+public class Test02 {
+    public static void main(String[] args) {
+        int[] a = new int[5];
+        int i = 5;
+        if (i<a.length){
+            System.out.println(a[5]);
+        }
+    }
+}
+```
+
+
+
+4. NumberFormatException 异常
+
+```java
+public class Test02 {
+    public static void main(String[] args) {
+        String str = "1234abcf";
+        System.out.println(Integer.parseInt(str));
+        }
+    }
+}
+```
+
+![image-20211221214127045](image-20211221214127045.png)
+
+数字格式化异常的解决，可以引入正则表达式判断是否为数字：
+
+```java
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Test02 {
+    public static void main(String[] args) {
+        String str = "1234abcf";
+        Pattern p = Pattern.compile("^\\d+$");
+        Matcher m = p.matcher(str);
+        if(m.matches()){//如果str匹配代表数字的正则表达式，才会转换
+            System.out.println(Integer.parseInt(str));
+        }
+    }
+}
+```
+
+
+
+所有不是 RuntimeException 的异常，统称为 Checked Exception，又被称为“已检查异常”，如 IOException、SQLException 等以及用户自定义的 Exception 异常。 这类异常在编译时就必须做出处理，否则无法通过编译。
+
+
+
+##### 2.2.2 CheckedException 已检查异常
+
+所有不是 RuntimeException 的异常，统称为 Checked Exception，又被称为“已检查异常”，如 IOException、SQLException 等以及用户自定义的 Exception 异常。 这类异常在编译时就必须做出处理，否则无法通过编译。
+
+
+
+### 3. 异常的处理
+
+#### 3.1 方式一：捕获异常（try-catch-finally）
+
+捕获异常是通过 3 个关键词来实现的：try-catch-finally。用 try 来执行一段程序，如果出现异常，系统抛出一个异常，可以通过它的类型来捕捉（catch）并处理它，最后一步是通过 finally 语句为异常处理提供一个统一的出口，finally 所指定的代码都要被执行（catch 语句可有多条；finally 语句最多只能有一条，根据自己的需要可有可无）。
+
+![image-20211221220957644](image-20211221220957644.png)
+
+**try：** 
+
+try 语句指定了一段代码，该段代码就是异常捕获并处理的范围。在执行过程中，当任意一条语句产生异常时，就会跳过该条语句中后面的代码。代码中可能会产生并抛出一种或几种类型的异常对象，它后面的 catch 语句要分别对这些异常做相应的处理。 
+
+一个 try 语句必须带有至少一个 catch 语句块或一个 finally 语句块 。
+
+**注意事项：**
+
+当异常处理的代码执行结束以后，不会回到 try 语句去执行尚未执行的代码
+
+**catch：** 
+
++ 每个 try 语句块可以伴随一个或多个 catch 语句，用于处理可能产生的不同类型的异常对象。 
+
++ **常用方法，**这些方法均继承自 Throwable 类 。 
+
+  toString ()方法，显示异常的类名和产生异常的原因 
+
+  getMessage()方法，只显示产生异常的原因，但不显示类名。 
+
+  printStackTrace()方法，用来跟踪异常事件发生时堆栈的内容。 
+
++ **catch 捕获异常时的捕获顺序：** 
+
+  如果异常类之间有继承关系，先捕获子类异常再捕获父类异常。 
+
+**finally：** 
+
++ 有些语句，不管是否发生了异常，都必须要执行，那么就可以把这样的语句放到 finally 语句块中。 
++ 通常在 finally 中关闭程序块已打开的资源，比如：关闭文件流、释放数据库连接等。 
+
+**try-catch-finally 语句块的执行过程：** 
+
+程序首先执行可能发生异常的 try 语句块。如果 try 语句没有出现异常则执行完后跳至finally 语句块执行；如果 try 语句出现异常，则中断执行并根据发生的异常类型跳至相应的catch 语句块执行处理。catch 语句块可以有多个，分别捕获不同类型的异常。catch 语句块执行完后程序会继续执行 finally 语句块。finally 语句是可选的，如果有的话，则不管是否发生异常，finally 语句都会被执行。
+
+**注意事项**
+
++ 即使 try 和 catch 块中存在 return 语句，finally 语句也会执行。是在执行完 finally语句后再通过 return 退出。 
++ finally 语句块只有一种情况是不会执行的，那就是在执行 finally 之前遇到了System.exit(0)结束程序运行。 
+
+```java
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class Test03 {
+    public static void main(String[] args) {
+        FileReader reader = null;
+        try {
+            reader = new FileReader("/Users/zhaocong/电影/a.txt");
+            char c1 = (char)reader.read();
+            char c2 = (char)reader.read();
+            System.out.println(""+c1+c2);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                if(reader!=null){
+                    reader.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+(快捷键 IDEA 中，使用：ctrl+alt+t，eclipse 中，使用：ctrl+shift+z)
+
+
+
+#### 3.2 方式二：声明异常（throws 子句）
+
+当 CheckedException 产生时，不一定立刻处理它，可以再把异常 throws 出去。**当前方法可以不处理发生的异常，而是向上传递给调用它的方法处理**。如果一个方法中可能产生某种异常，但是并不能确定如何处理这种异常，则应根据异常规范在方法的首部声明该方法可能抛出的异常。
+
+ ```java
+ import java.io.FileNotFoundException;
+ import java.io.FileReader;
+ import java.io.IOException;
+ 
+ public class Test04 {
+     public static void main(String[] args) throws Exception {
+         readFile("/Users/zhaocong/电影/a.txt");
+     }
+     public static void readFile(String path) throws Exception {
+       	//throw异常后就不用catch了
+         FileReader reader = null;
+         try {
+             reader = new FileReader(path);
+             char c1 = (char)reader.read();
+             char c2 = (char)reader.read();
+             System.out.println(""+c1+c2);
+         } finally {
+             try {
+                 if(reader!=null){
+                     reader.close();
+                 }
+             } catch (IOException e) {
+                 e.printStackTrace();
+             }
+         }
+     }
+ }
+ ```
+
+
+
+#### 3.3 try-with-resource 自动关闭 Closable 接口的资源
+
+JAVA 中，JVM 的垃圾回收机制可以对内部资源实现自动回收，给开发者带来了极大的便利。但是 JVM 对外部资源(调用了底层操作系统的资源)的引用却无法自动回收，例如数据库连接，网络连接以及输入输出 IO 流等。这些连接就需要我们手动去关闭，不然会导致外部资源泄露，连接池溢出以及文件被异常占用等。
+
+JDK7 之后，新增了“try-with-reasource”。它可以自动关闭实现了AutoClosable 接口的类，实现类需要实现 close()方法。”try-with-resources声明”，将 try-catch-finally 简化为 try-catch，在编译时编译器还是会转化为 try-catch-finally 语句。 
+
+```java
+import java.io.FileReader;
+
+public class Test05 {
+    public static void main(String[] args) {
+        try(FileReader reader = new FileReader("/Users/zhaocong/电影/a.txt");){
+            char c1 = (char)reader.read();
+            char c2 = (char)reader.read();
+            System.out.println(""+c1+c2);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+
+
+#### 3.4 自定义异常
+
++ 在程序中，可能会遇到 JDK 提供的任何标准异常类都无法充分描述清楚我们想要表达的问题，这种情况下可以创建自己的异常类，即自定义异常类。 
++ 自定义异常类只需从 Exception 类或者它的子类派生一个子类即可。 
++ 自定义异常类如果继承 Exception 类，则为受检查异常，必须对其进行处理；如果不想处理，可以让自定义异常类继承运行时异常 RuntimeException 类。 
++ 习惯上，自定义异常类应该包含 2 个构造器：一个是默认的构造器，另一个是带有详细信息的构造器。 
+
+```java
+//IllegalAgaException：非法年龄异常，继承Exception类
+class IllegalAgaException extends Exception{
+    //默认构造器
+    public IllegalAgaException(){
+
+    }
+    //带有详细信息的构造器，信息存储在message中
+    public IllegalAgaException(String message){
+        super(message);
+    }
+}
+```
+
+
+
+## 泛型
+
+### 1. 泛型的概念
+
+泛型的本质就是“**数据类型的参数化**”，处理的数据类型不是固定的，而是可以作为参数传入。我们可以把“泛型”理解为数据类型的一个占位符(类似：形式参数)，即告诉编译器，在调用泛型时必须传入实际类型。这种参数类型可以用在类、接口和方法中，分别被称为泛型类、泛型接口、泛型方法。
+
+1. 把类型当作是参数一样传递。 
+2. <数据类型> 只能是引用类型。
+
+泛型的优点： 
+
+1. **代码可读性更好**，所有类型转换由编译器自动完成，不用强制转换。
+2. **程序更加安全**，不需要明确知道实际类型，只要编译时期没有警告，运行时期就不会出现ClassCastException 异常。
+
+
+
+**类型擦除**：泛型主要用于编译阶段，编译后生成的字节码 class 文件不包含泛型中的类型信息，涉及类型转换仍然是普通的强制类型转换。 **类型参数在编译后会被替换成** **Object，运行时虚拟机并不知道泛型。** 
+
+#### 1.1 定义泛型
+
+泛型字符可以是任何标识符，一般采用几个标记：E、T、K、V、N、？。
+
+E——Element——在容器中使用，表示容器中的元素 
+
+T——Type——表示普通的 JAVA 类
+
+K——Key——表示键，例如：Map 中的键 Key 
+
+V——Value——表示值 
+
+N——Number——表示数值类型 
+
+？——表示不确定的 JAVA 类型 
+
+
+
+### 2.泛型类
+
+把泛型定义在类上，用户使用该类的时候，类型才会确定。泛型类的具体使用方法是在类的名称后添加一个或多个类型参数声明，如：`<T>`、`<T,K,V>`
+
+```java
+语法结构
+public class 类名<泛型表示符号> {
+  
+}
+```
+
+```java
+//创建Generic类
+public class Generic<T> {
+    private T flag;
+    public void setFlag(T flag){
+        this.flag = flag;
+    }
+    public T getFlag(){
+        return this.flag;
+    }
+}
+
+//测试代码，创建实例
+public class test {
+    public static void main(String[] args) {
+        Generic<String> generic = new Generic<>();
+        generic.setFlag("admin");
+        String flag = generic.getFlag();//如果不用泛型，则要强制类型转换Object-String
+        System.out.println(flag);
+
+        Generic<Integer> generic1 = new Generic<>();
+        generic1.setFlag(1000);
+        Integer flag1 = generic1.getFlag();
+        System.out.println(flag1);
+    }
+}
+```
+
+
+
+### 3. 泛型接口
+
+泛型接口和泛型类的声明方式一致，泛型接口的具体类型要在实现类中进行声明。
+
+```java
+语法结构
+public interface 接口名<泛型表示符号> { 
+
+}
+```
+
+```java
+//定义泛型接口
+public interface Igeneric<T> {
+    T getName(T name);
+}
+
+//创建接口实现类
+//泛型接口的具体类型要在实现类中进行声明
+public class IgenericImpl implements Igeneric<String>{
+    @Override
+    //重写函数的类型自动变为String
+    public String getName(String name) {
+        return name;
+    }
+}
+
+//创建测试类
+public class test2 {
+    public static void main(String[] args) {
+      	//用接口实现类修饰
+        IgenericImpl igeneric = new IgenericImpl();
+        String name = igeneric.getName("Tom");
+        System.out.println(name);
+
+        //使用接口类型修饰时要先声明类型
+        Igeneric<String> igeneric1 = new IgenericImpl();
+        String name1 = igeneric1.getName("Tim");
+        System.out.println(name1);
+    }
+}
+```
+
+
+
+### 4. 泛型方法
+
+**泛型方法是指将方法的参数类型定义成泛型，以便在调用时接收不同类型的参数。**类型参数可以有多个，用逗号隔开，如：<K,V>。定义时，类型参数一般放到返回值前面。
+
+调用泛型方法时，不需要像泛型类那样告诉编译器是什么类型，编译器可以自动推断出类型来。 
+
+#### 4.1 非静态方法
+
+```java
+public <泛型表示符号> void getName(泛型表示符号 name){
+
+}
+
+public <泛型表示符号> 泛型表示符号 getName(泛型表示符号 name){
+
+}
+```
+
+```java
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
